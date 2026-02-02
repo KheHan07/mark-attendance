@@ -18,45 +18,28 @@ const transporter = nodemailer.createTransport({
 export async function POST(request: Request) {
   try {
     const { barcodeId } = await request.json();
-    console.log(`🔍 Server received Scan: ${barcodeId}`);
+    const now = new Date();
 
-    // 1. Check Database
-    const { data: student, error: dbError } = await supabase
+    const { data: student, error } = await supabase
       .from('students')
       .select('*')
       .eq('barcode_id', barcodeId)
       .single();
 
-    if (dbError) {
-      console.error("❌ Database Error:", dbError.message);
-      return NextResponse.json({ error: `DB Error: ${dbError.message}` }, { status: 500 });
-    }
-    
-    if (!student) {
-      console.error("❌ Student not found in DB");
-      return NextResponse.json({ error: 'Student ID not found in database' }, { status: 404 });
+    if (error || !student) {
+      return NextResponse.json({ error: 'Student not found' }, { status: 404 });
     }
 
-    console.log(`✅ Found Student: ${student.name}. Sending email...`);
-
-    // 2. Send Email
-    try {
-      await transporter.sendMail({
-        from: process.env.GMAIL_USER,
-        to: student.parent_email,
-        subject: `Arrival: ${student.name}`,
-        text: `Your child ${student.name} has arrived. Marks: ${student.marks}`,
-      });
-      console.log("✅ Email sent successfully!");
-    } catch (emailError: any) {
-      console.error("❌ Email Failed:", emailError.message);
-      return NextResponse.json({ error: `Email Failed: ${emailError.message}` }, { status: 500 });
-    }
+    // Send "Arrived" Email Only (No Marks)
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
+      to: student.parent_email,
+      subject: `Attendance: ${student.name}`,
+      text: `Hello,\n\n${student.name} arrived at school.\nDate: ${now.toLocaleDateString()}\nTime: ${now.toLocaleTimeString()}`,
+    });
 
     return NextResponse.json({ success: true, student: student.name });
-
   } catch (err: any) {
-    console.error("❌ General Error:", err.message);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
