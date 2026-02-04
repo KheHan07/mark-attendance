@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         </div>
         <div style="padding: 20px; background-color: #ffffff;">
           <p style="font-size: 16px; color: #333;">Hello,</p>
-          <p style="font-size: 16px; color: #333;">This is to inform you that your child, <strong>${student.name}</strong>, has safely arrived at school.</p>
+          <p style="font-size: 16px; color: #333;">This is to inform you that your child, <strong>${student.name}</strong>, has safely arrived at the classroom.</p>
           
           <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0;">
             <p style="margin: 5px 0; color: #555;"><strong>Date & Time:</strong></p>
@@ -51,13 +51,13 @@ export async function POST(request: Request) {
           <p style="font-size: 14px; color: #666;">This is an automated message. Please do not reply.</p>
         </div>
         <div style="background-color: #f9fafb; padding: 15px; text-align: center; font-size: 12px; color: #999;">
-          &copy; 2026 Smart Attendance System
+          &copy; 2026 EduTrack System
         </div>
       </div>
     `;
 
     await transporter.sendMail({
-      from: `School Admin <${process.env.GMAIL_USER}>`,
+      from: `EduTrack Admin <${process.env.GMAIL_USER}>`,
       to: student.parent_email,
       subject: `✅ Arrived: ${student.name}`,
       html: emailHtml,
