@@ -17,10 +17,18 @@ export default function Home() {
         fps: 10, 
         qrbox: { width: 250, height: 150 },
         supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE, Html5QrcodeSupportedFormats.CODE_128]
+        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE, Html5QrcodeSupportedFormats.CODE_128],
+        videoConstraints: {
+          facingMode: "environment" 
+        }
       },
       false
     );
+
+    setTimeout(() => {
+        const stopBtn = document.getElementById("html5-qrcode-button-camera-stop");
+        if(stopBtn) stopBtn.style.display = "none";
+    }, 500);
 
     scanner.render(onScanSuccess, (err) => {
         // Ignore errors while scanning
@@ -101,12 +109,12 @@ export default function Home() {
               <span className="text-sm font-medium">Scanning...</span>
               <button 
                 onClick={() => setShowScanner(false)} 
-                className="text-xs bg-white/20 px-3 py-1 rounded-full"
+                className="text-xs bg-white/20 px-3 py-1 rounded-full hover:bg-white/30"
               >
                 Cancel
               </button>
             </div>
-            <div id="reader" className="flex-1 w-full h-full"></div>
+            <div id="reader" className="flex-1 w-full h-full bg-black"></div>
           </div>
         )}
 
@@ -132,7 +140,7 @@ export default function Home() {
                   
                   <button 
                     onClick={() => { setScanResult(null); setShowScanner(true); }}
-                    className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-200"
+                    className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700"
                   >
                     Scan Next Student
                   </button>
